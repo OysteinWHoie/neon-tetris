@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Neon Tetris</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
@@ -60,14 +60,21 @@
             border: 2px solid rgba(0,255,255,0.3);
             box-shadow: 0 0 20px rgba(0,255,255,0.2);
             display: flex;
-            gap: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            position: relative;
         }
         .game-board {
             background: linear-gradient(45deg, rgba(0,255,255,0.1), rgba(139,0,255,0.1));
+            border: 2px solid rgba(0,255,255,0.5);
+            padding-bottom: 4px; /* Increased padding to ensure bottom border is visible */
+            box-shadow: 0 0 8px rgba(0,255,255,0.5);
+            position: relative;
+            z-index: 1;
         }
         .cell {
-            width: 40px; /* Increased from 30px */
-            height: 40px; /* Increased from 30px */
+            /* Width and height controlled by JavaScript now */
             border: 1px solid rgba(0,255,255,0.1);
             position: relative;
             overflow: hidden;
@@ -95,7 +102,9 @@
             font-weight: bold;
         }
         .sidebar {
-            min-width: 200px;
+            width: clamp(150px, 20%, 200px);
+            display: flex;
+            flex-direction: column;
         }
         
         .next-piece {
@@ -148,6 +157,130 @@
             transform: translateY(0);
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 255, 255, 0.2);
         }
+        
+        /* Falling Tetris Pieces Animation */
+        /* Container for falling pieces - positioned exactly over the game board */
+        .falling-pieces-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 10;
+            pointer-events: none; /* Allow clicks to pass through to elements below */
+        }
+        
+        /* This ensures the container is positioned exactly over the game board */
+        #game-board {
+            position: relative; /* Ensure the game board is a positioning context */
+        }
+        
+        /* Ensure the start screen is positioned relative to the game container */
+        .start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+            z-index: 5;
+        }
+        
+        /* Position the falling pieces container precisely within the game board */
+        .falling-pieces-container {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            overflow: hidden !important;
+            z-index: 10;
+            pointer-events: none; /* Allow clicks to pass through to elements below */
+        }
+        
+        .falling-piece {
+            position: absolute;
+            z-index: 10;
+        }
+        
+        /* Each piece will have its own animation applied via JavaScript */
+        @keyframes fall {
+            from { top: -60px; }
+            to { top: 100%; }
+        }
+        
+        .tetris-cell {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid rgba(255, 50, 50, 1);
+            background: rgba(255, 0, 0, 1);
+            box-shadow: 0 0 15px rgba(255, 50, 50, 1);
+        }
+        
+        /* I-piece */
+        .i-piece .cell-1 { top: 0; left: 0; }
+        .i-piece .cell-2 { top: 30px; left: 0; }
+        .i-piece .cell-3 { top: 60px; left: 0; }
+        .i-piece .cell-4 { top: 90px; left: 0; }
+        
+        /* O-piece (square) */
+        .o-piece .cell-1 { top: 0; left: 0; }
+        .o-piece .cell-2 { top: 0; left: 30px; }
+        .o-piece .cell-3 { top: 30px; left: 0; }
+        .o-piece .cell-4 { top: 30px; left: 30px; }
+        
+        /* T-piece */
+        .t-piece .cell-1 { top: 0; left: 30px; }
+        .t-piece .cell-2 { top: 30px; left: 0; }
+        .t-piece .cell-3 { top: 30px; left: 30px; }
+        .t-piece .cell-4 { top: 30px; left: 60px; }
+        
+        /* L-piece */
+        .l-piece .cell-1 { top: 0; left: 0; }
+        .l-piece .cell-2 { top: 30px; left: 0; }
+        .l-piece .cell-3 { top: 60px; left: 0; }
+        .l-piece .cell-4 { top: 60px; left: 30px; }
+        
+        /* Z-piece */
+        .z-piece .cell-1 { top: 0; left: 0; }
+        .z-piece .cell-2 { top: 0; left: 30px; }
+        .z-piece .cell-3 { top: 30px; left: 30px; }
+        .z-piece .cell-4 { top: 30px; left: 60px; }
+        
+        .start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: transparent; /* Removed dark overlay */
+            z-index: 5;
+        }
+        
+        /* Position the start button container within the game board grid only */
+        #start-screen .start-button-container {
+            position: absolute;
+            bottom: 25%;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            text-align: center;
+            z-index: 100; /* Increased z-index to ensure it's always on top */
+            width: 100%; /* Match the width of the game board */
+            max-width: 100%; /* Ensure it doesn't overflow */
+            box-sizing: border-box; /* Include padding in width calculation */
+            pointer-events: auto; /* Ensure button is clickable */
+        }
     </style>
 </head>
 <body class="bg-transparent text-white min-h-screen flex items-center justify-center">
@@ -162,10 +295,10 @@
             <div class="grid-lines"></div>
         </div>
     </div>
-    <div class="tetris-container bg-gray-800 p-8 rounded-lg shadow-lg">
-        <h1 class="text-4xl font-bold mb-4 text-center futuristic-text">Neon Tetris</h1>
+    <div class="tetris-container bg-gray-800 p-4 rounded-lg shadow-lg" style="max-width: 95vw; overflow: visible;">
+        <h1 class="text-3xl font-bold mb-2 text-center futuristic-text">Neon Tetris</h1>
         <div class="game-container flex gap-8">
-            <div id="game-board" class="grid grid-cols-10 gap-1 bg-gray-700 p-2 rounded-lg game-board">
+            <div id="game-board" class="grid grid-cols-10 gap-1 bg-gray-700 p-2 pb-2 rounded-lg game-board">
                 <!-- Game board will be populated by JavaScript -->
             </div>
             <div class="sidebar">
@@ -189,10 +322,18 @@
                 </div>
             </div>
         </div>
-        <div class="controls mt-8 text-center">
-            <button id="start" class="neon-button futuristic-text">
-                Start Game
-            </button>
+        <!-- Start screen with falling Tetris pieces -->
+        <div id="start-screen" class="start-screen">
+            <!-- Container for falling Tetris pieces - positioned exactly within the game grid -->
+            <div id="falling-pieces-container" class="falling-pieces-container">
+                <!-- Pieces will be dynamically added here via JavaScript -->
+            </div>
+            <!-- Button container positioned within the game board only -->
+            <div class="start-button-container">
+                <button id="start" class="neon-button futuristic-text">
+                    Start Game
+                </button>
+            </div>
         </div>
     </div>
     <script src="synth.js"></script>

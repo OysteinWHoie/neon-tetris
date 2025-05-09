@@ -58,7 +58,7 @@ class RetroSynthesizer {
         this.initialized = true;
     }
     
-    // Start the audio context (must be called after user interaction)
+    // Start the audio context (works without user interaction in modern browsers)
     start() {
         if (!this.initialized) {
             this.init();
@@ -71,12 +71,8 @@ class RetroSynthesizer {
             this.audioContext.resume();
         }
         
-        // If music should be playing but isn't, try to start it
-        if (this.isPlaying && this.audioElement && this.audioElement.paused) {
-            this.audioElement.play().catch(error => {
-                console.log('Still unable to play audio:', error);
-            });
-        }
+        // Start background music immediately
+        this.startBackgroundMusic();
     }
     
     // Toggle mute state
@@ -98,40 +94,46 @@ class RetroSynthesizer {
         return this.isMuted;
     }
     
-    // Play a line clear sound
+    // Play a more pleasant, quieter line clear sound
     playLineClearSound(lines = 1) {
         if (!this.initialized || this.isMuted) return;
         
         try {
-            // Different sounds based on number of lines cleared
-            const baseFreq = lines === 4 ? 520 : 440;
-            const duration = lines === 4 ? 0.6 : 0.3;
+            // Different sounds based on number of lines cleared, but with gentler frequencies
+            const baseFreq = lines === 4 ? 440 : 330; // Lower frequencies are less harsh
+            const duration = lines === 4 ? 0.4 : 0.25; // Shorter duration
             
             // Create oscillators for the sound
             const osc1 = this.audioContext.createOscillator();
             const osc2 = this.audioContext.createOscillator();
             const gainNode = this.audioContext.createGain();
             
-            // Connect oscillators to gain node
-            osc1.connect(gainNode);
-            osc2.connect(gainNode);
+            // Create a low-pass filter to soften the sound
+            const filter = this.audioContext.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 2000; // Cut high frequencies
+            
+            // Connect oscillators through filter to gain node
+            osc1.connect(filter);
+            osc2.connect(filter);
+            filter.connect(gainNode);
             gainNode.connect(this.masterGain);
             
-            // Set oscillator types for a retro sound
-            osc1.type = 'square';
-            osc2.type = 'sawtooth';
+            // Set oscillator types for a softer sound
+            osc1.type = 'sine'; // Sine waves are much softer than square
+            osc2.type = 'triangle'; // Triangle is gentler than sawtooth
             
             // Set initial frequency
             osc1.frequency.value = baseFreq;
-            osc2.frequency.value = baseFreq * 1.5;
+            osc2.frequency.value = baseFreq * 1.25; // Less dissonant overtone
             
-            // Sweep frequency up
-            osc1.frequency.exponentialRampToValueAtTime(baseFreq * 2, this.audioContext.currentTime + duration * 0.8);
-            osc2.frequency.exponentialRampToValueAtTime(baseFreq * 3, this.audioContext.currentTime + duration * 0.8);
+            // Gentler frequency sweep
+            osc1.frequency.linearRampToValueAtTime(baseFreq * 1.5, this.audioContext.currentTime + duration * 0.8);
+            osc2.frequency.linearRampToValueAtTime(baseFreq * 1.75, this.audioContext.currentTime + duration * 0.8);
             
-            // Envelope for the sound
+            // Envelope for the sound with MUCH lower volume
             gainNode.gain.value = 0;
-            gainNode.gain.linearRampToValueAtTime(0.4, this.audioContext.currentTime + 0.05);
+            gainNode.gain.linearRampToValueAtTime(0.15, this.audioContext.currentTime + 0.05); // Lower peak volume (was 0.4)
             gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + duration);
             
             // Start and stop oscillators
