@@ -58,6 +58,7 @@ class RetroSynthesizer {
         this.initialized = true;
     }
     
+    // Test
     // Start the audio context (works without user interaction in modern browsers)
     start() {
         if (!this.initialized) {
