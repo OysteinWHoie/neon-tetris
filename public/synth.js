@@ -237,10 +237,12 @@ class RetroSynthesizer {
             this.init();
         }
         
+        // Set user interaction flag to true to help with autoplay
+        this.hasUserInteraction = true;
+        
         // Stop any existing music
         this.stopBackgroundMusic();
         
-        // Start playing the music tracks
         this.isPlaying = true;
         this.playNextTrack();
     }
@@ -334,33 +336,32 @@ class RetroSynthesizer {
             // Add ended event listener
             this.audioElement.addEventListener('ended', this._trackEndedHandler);
             
-            // Try to play the audio if we've had user interaction
-            if (this.hasUserInteraction) {
-                console.log('Attempting to play audio...');
-                const playPromise = this.audioElement.play();
-                
-                // Handle autoplay restrictions
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log('Audio playback started successfully');
-                    }).catch(error => {
-                        console.error('Autoplay prevented:', error);
-                        // We'll need user interaction to play
-                        console.log('User interaction required to start audio');
-                        
-                        // Setup a one-time event listener for the entire document
-                        const playOnInteraction = () => {
-                            this.audioElement.play().catch(e => console.error('Still cannot play:', e));
-                            document.removeEventListener('click', playOnInteraction);
-                            document.removeEventListener('keydown', playOnInteraction);
-                        };
-                        
-                        document.addEventListener('click', playOnInteraction);
-                        document.addEventListener('keydown', playOnInteraction);
-                    });
-                }
-            } else {
-                console.log('Waiting for user interaction before playing audio');
+            // Always try to play the audio, treating page load as user interaction
+            console.log('Attempting to play audio...');
+            const playPromise = this.audioElement.play();
+            
+            // Handle autoplay restrictions
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log('Audio playback started successfully');
+                    this.hasUserInteraction = true; // Mark that we've successfully played audio
+                }).catch(error => {
+                    console.error('Autoplay prevented:', error);
+                    console.log('User interaction required to start audio');
+                    
+                    // Setup a one-time event listener for the entire document
+                    const playOnInteraction = () => {
+                        this.hasUserInteraction = true;
+                        this.audioElement.play().catch(e => console.error('Still cannot play:', e));
+                        document.removeEventListener('click', playOnInteraction);
+                        document.removeEventListener('keydown', playOnInteraction);
+                        document.removeEventListener('touchstart', playOnInteraction);
+                    };
+                    
+                    document.addEventListener('click', playOnInteraction);
+                    document.addEventListener('keydown', playOnInteraction);
+                    document.addEventListener('touchstart', playOnInteraction);
+                });
             }
             
             console.log(`Track ready: ${trackPath.split('/').pop()}`);

@@ -629,10 +629,16 @@ function startGame() {
     // Start with base speed depending on level
     updateGameSpeed();
     
-    // No need to restart background music - it's already playing
-    // Just ensure audio context is running
-    if (synth && synth.audioContext && synth.audioContext.state === 'suspended') {
-        synth.audioContext.resume();
+    // Ensure audio context is running but don't restart the music
+    if (synth) {
+        // Make sure audio context is resumed
+        if (synth.audioContext && synth.audioContext.state === 'suspended') {
+            synth.audioContext.resume();
+        }
+        
+        // Ensure we don't stop the background music that's already playing
+        // This ensures music continues without interruption
+        synth.hasUserInteraction = true;
     }
 }
 
@@ -798,6 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize audio system and start music immediately
     if (synth) {
         // Start audio system immediately
+        synth.init();
         synth.start();
         // Start background music as soon as the page loads
         synth.startBackgroundMusic();
