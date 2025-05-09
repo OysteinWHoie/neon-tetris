@@ -587,6 +587,9 @@ function newPiece() {
         // Show the start screen with 3D animation again
         document.getElementById('start-screen').style.display = 'flex';
         
+        // Show the game buttons again
+        document.getElementById('game-buttons').style.display = 'block';
+        
         // Show game over message
         setTimeout(() => {
             alert('Game Over!');
@@ -604,7 +607,7 @@ function startGame() {
     speedFactor = 1.0;
     startTime = Date.now();
     
-        // Reset the board to all zeros
+    // Reset the board to all zeros
     initializeBoard();
     console.log('Board reset to all zeros');
     score = 0;
@@ -818,6 +821,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('start').addEventListener('click', function() {
         // Hide the entire start screen when clicked
         document.getElementById('start-screen').style.display = 'none';
+        // Hide the game buttons container
+        document.getElementById('game-buttons').style.display = 'none';
         // Then start the game
         startGame();
     });
