@@ -1,0 +1,126 @@
+/* Tron-style infinite grid background */
+.grid-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -10;
+  perspective: 2000px; /* Adjusted perspective for more authentic look */
+  overflow: hidden;
+  background-color: #000;
+}
+
+.grid-top, .grid-bottom {
+  position: absolute;
+  width: 250%; /* Even wider grid for better coverage */
+  height: 100vh; /* Full viewport height */
+  left: -75%; /* Center the wider grid */
+  transform-style: preserve-3d;
+  animation: gridPulse 20s infinite linear;
+}
+
+.grid-top {
+  top: -10vh; /* Start above the screen */
+  transform-origin: center bottom;
+  transform: rotateX(75deg); /* Steeper angle to match reference */
+}
+
+.grid-bottom {
+  bottom: -10vh; /* Extend below the screen */
+  transform-origin: center top;
+  transform: rotateX(-75deg); /* Steeper angle to match reference */
+}
+
+.grid-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: 60px 60px; /* Grid cell size to match reference */
+  background-image:
+    linear-gradient(rgba(24, 138, 255, 0.7) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24, 138, 255, 0.7) 1px, transparent 1px);
+  filter: drop-shadow(0 0 2px rgba(24, 138, 255, 0.8));
+}
+
+.grid-lines::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(rgba(24, 138, 255, 0.9) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(24, 138, 255, 0.9) 2px, transparent 2px);
+  background-size: 300px 300px; /* Larger main grid lines */
+  background-position: -1px -1px;
+  filter: drop-shadow(0 0 3px rgba(24, 138, 255, 0.9));
+}
+
+.horizon {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: #188aff; /* Brighter blue to match reference */
+  top: 50%;
+  left: 0;
+  box-shadow: 0 0 20px 6px #188aff;
+  z-index: -5; /* Ensure it's below game content but above grids */
+}
+
+.stars {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(white 1px, transparent 1px);
+  background-size: 300px 300px;
+  opacity: 0.2; /* More subtle stars to match reference */
+}
+
+/* Animation */
+@keyframes gridPulse {
+  0% {
+    opacity: 0.8;
+    background-position: 0 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.8;
+    background-position: 60px 60px; /* Match grid size */
+  }
+}
+
+@keyframes gridMove {
+  0% {
+    transform: translateZ(0);
+  }
+  100% {
+    transform: translateZ(50px);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid-lines {
+    background-size: 30px 30px;
+  }
+  
+  .grid-lines::before {
+    background-size: 120px 120px;
+  }
+}
+
+/* Add glow to the Tetris container to make it stand out from the grid */
+.tetris-container {
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 0 40px rgba(0, 102, 255, 0.6);
+  background-color: rgba(30, 30, 40, 0.85) !important; /* Darker semi-transparent background */
+  backdrop-filter: blur(5px); /* Slight blur effect */
+  border: 1px solid rgba(0, 102, 255, 0.4) !important;
+}
