@@ -821,6 +821,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Then start the game
         startGame();
     });
+    
+    // Add mute button event listener
+    document.getElementById('mute-button').addEventListener('click', function() {
+        if (synth) {
+            const isMuted = synth.toggleMute();
+            // Update the mute button icon
+            document.getElementById('mute-icon').textContent = isMuted ? '🔇' : '🔊';
+        }
+    });
     document.addEventListener('keydown', (e) => {
         if (gameOver) return;
         

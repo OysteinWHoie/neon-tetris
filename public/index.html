@@ -158,6 +158,51 @@
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 255, 255, 0.2);
         }
         
+        /* Smaller neon button for mute control */
+        .neon-button-small {
+            font-family: 'Orbitron', sans-serif;
+            position: relative;
+            display: inline-block;
+            padding: 8px 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            background: linear-gradient(90deg, #00FFFF, #8B00FF);
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 255, 255, 0.3);
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .neon-button-small:hover {
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.8), inset 0 0 10px rgba(0, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        .neon-button-small:active {
+            transform: translateY(0);
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.5), inset 0 0 4px rgba(0, 255, 255, 0.2);
+        }
+        
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 15px;
+            pointer-events: auto; /* Ensure the button is clickable */
+            position: relative;
+            z-index: 101; /* Higher than other elements */
+        }
+        
+        /* Ensure the start-button-container allows for proper layout of buttons */
+        .start-button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: auto; /* Ensure all buttons are clickable */
+        }
+        
         /* Falling Tetris Pieces Animation */
         /* Container for falling pieces - positioned exactly over the game board */
         .falling-pieces-container {
@@ -189,6 +234,7 @@
             align-items: center;
             background: transparent;
             z-index: 5;
+            pointer-events: none; /* Allow clicks to pass through except for specific elements */
         }
         
         /* Position the falling pieces container precisely within the game board */
@@ -259,27 +305,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: transparent; /* Removed dark overlay */
+            pointer-events: none; /* Allow clicks to pass through except for specific elements */
             z-index: 5;
         }
         
-        /* Position the start button container within the game board grid only */
-        #start-screen .start-button-container {
-            position: absolute;
-            bottom: 25%;
-            left: 0;
-            right: 0;
-            margin: 0 auto;
-            text-align: center;
-            z-index: 100; /* Increased z-index to ensure it's always on top */
-            width: 100%; /* Match the width of the game board */
-            max-width: 100%; /* Ensure it doesn't overflow */
-            box-sizing: border-box; /* Include padding in width calculation */
-            pointer-events: auto; /* Ensure button is clickable */
+        /* Game buttons styling */
+        #game-board-buttons {
+            z-index: 200;
         }
     </style>
 </head>
@@ -315,7 +347,7 @@
                         <h3 class="text-lg font-semibold mb-2 futuristic-text">Level</h3>
                         <p id="level" class="text-2xl score-value">1</p>
                     </div>
-                    <div class="lines-cleared">
+                    <div class="lines-cleared mb-4">
                         <h3 class="text-lg font-semibold mb-2 futuristic-text">Lines</h3>
                         <p id="lines" class="text-2xl score-value">0</p>
                     </div>
@@ -328,11 +360,19 @@
             <div id="falling-pieces-container" class="falling-pieces-container">
                 <!-- Pieces will be dynamically added here via JavaScript -->
             </div>
-            <!-- Button container positioned within the game board only -->
-            <div class="start-button-container">
-                <button id="start" class="neon-button futuristic-text">
-                    Start Game
-                </button>
+        </div>
+        
+        <!-- Button container positioned directly over the game board -->
+        <div id="game-buttons" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 200;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                <div id="game-board-buttons" style="position: absolute; top: 50%; left: 190px; transform: translate(-50%, -50%); display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: auto;">
+                    <button id="start" class="neon-button futuristic-text" style="margin-bottom: 15px;">
+                        Start Game
+                    </button>
+                    <button id="mute-button" class="neon-button-small futuristic-text">
+                        <span id="mute-icon">🔊</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
