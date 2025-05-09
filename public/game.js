@@ -3,15 +3,15 @@ const BOARD_HEIGHT = 20;
 
 // Calculate the appropriate block size based on screen height
 function calculateBlockSize() {
-    const maxHeight = window.innerHeight * 0.75; // Use 75% of viewport height
-    const maxWidth = window.innerWidth * 0.75;  // Use 75% of viewport width (increased from 60%)
+    const maxHeight = window.innerHeight * 0.6; // Use 60% of viewport height (reduced from 75%)
+    const maxWidth = window.innerWidth * 0.6;  // Use 60% of viewport width (reduced from 75%)
     
     // Calculate block size based on height and width constraints
     const byHeight = Math.floor(maxHeight / BOARD_HEIGHT);
     const byWidth = Math.floor(maxWidth / BOARD_WIDTH);
     
     // Use the smaller of the two to ensure it fits in both dimensions
-    return Math.min(byHeight, byWidth, 45); // Increased cap to 45px max (from 40px)
+    return Math.min(byHeight, byWidth, 35); // Reduced cap to 35px max (from 45px)
 }
 
 // Initialize with calculated size, will be updated on resize
