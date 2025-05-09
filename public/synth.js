@@ -73,6 +73,21 @@ class RetroSynthesizer {
         
         // Start background music immediately
         this.startBackgroundMusic();
+        
+        // Add a fallback method to start audio on first user interaction
+        const startAudioOnInteraction = () => {
+            if (this.audioContext && this.audioContext.state === 'suspended') {
+                this.audioContext.resume();
+            }
+            if (this.audioElement && this.audioElement.paused) {
+                this.audioElement.play().catch(e => console.warn('Could not play audio on interaction:', e));
+            }
+            document.removeEventListener('click', startAudioOnInteraction);
+            document.removeEventListener('keydown', startAudioOnInteraction);
+        };
+        
+        document.addEventListener('click', startAudioOnInteraction);
+        document.addEventListener('keydown', startAudioOnInteraction);
     }
     
     // Toggle mute state
